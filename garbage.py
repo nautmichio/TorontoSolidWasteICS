@@ -32,7 +32,6 @@ def get_cal(id):
         total = 1
         offset = 0
         while offset < total:
-                # print(total,offset)
                 p = { "id": id,"offset": offset }
                 r = urllib.request.urlopen(url, data=bytes(json.dumps(p), encoding="utf-8"))
                 data = json.loads(r.read())
@@ -40,7 +39,6 @@ def get_cal(id):
                         total = data["result"]["total"]
                         for record in data["result"]["records"]:
                                 cal.append(record)
-                        #cal.append(data["result"]["records"])
                         offset+=100
                 else: 
                         break
@@ -74,8 +72,6 @@ def gen_pickup(list_val):
         if list_val["ChristmasTree"] != '0':
                 list_pickup.append("Christmas Tree")
         str_list = ','.join(list_pickup)
-        print(list_val)
-        print(str_list)
         return str_list
 def main():
         cal = list()
@@ -84,12 +80,4 @@ def main():
                 cal = get_cal(id)
                 sorted_cal = proc_sched(cal)
                 create_ics(sorted_cal)
-                # print(len(get_cal(id)))
-                #print(response["records"][0].items())
-'''                 for cal in response["records"]["Calendar"]:
-                        print(record)
-                        cal.append(response['records']) '''
-        #print(cal[2][0])
-        #cal_dict = proc_sched(response['records'])
-        #create_ics(cal_dict)
 main()
