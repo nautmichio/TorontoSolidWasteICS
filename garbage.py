@@ -23,7 +23,7 @@ def get_id_list():
         for keys in package['result']['resources']:
                 if keys["datastore_active"] and keys["last_modified"]:
                         date_obj = datetime.strptime(keys["last_modified"],'%Y-%m-%dT%H:%M:%S.%f')
-                        if date_obj >= datetime(2020,1,1):
+                        if date_obj >= datetime(2020,1,1):   #Only look for 2020 calendars
                                 idlist.append(keys["id"])
         return idlist
 def get_cal(id):
@@ -39,13 +39,12 @@ def get_cal(id):
                         total = data["result"]["total"]
                         for record in data["result"]["records"]:
                                 cal.append(record)
-                        offset+=100
+                        offset+=100  #default ckan limit is 100 
                 else: 
                         break
         return cal
 def create_ics(cal):
         for cal_type in cal:
-                # print(cal[cal_type])
                 c = Calendar()
                 for date in cal[cal_type]:
                         e = Event()
@@ -76,7 +75,6 @@ def gen_pickup(list_val):
 def main():
         cal = list()
         for id in get_id_list():
-                # print(id)
                 cal = get_cal(id)
                 sorted_cal = proc_sched(cal)
                 create_ics(sorted_cal)
