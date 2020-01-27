@@ -6,13 +6,15 @@ from ics import Calendar,Event
 # For example, to retrieve the metadata for this dataset:
 def proc_sched(sched):
         cal={}
-        for item in sched:
-                print(item.keys())
-                cal_type = item["Calendar"].replace(" ","")
+        for record in sched:
+                item = {k.replace(' ', ''): v for k, v in record.items()}       #Sometimes there are spaces in the Key Names
+                cal_type = item["Calendar"].replace(" ","")                     #Sometimes there are spaces in the calendar types
                 if cal_type not in cal:
                         cal[cal_type]={}
-                cal[cal_type].update({item["WeekStarting"] :gen_pickup(item)})
-        #print(cal)
+                if "WeekStarting" in item.keys():
+                        cal[cal_type].update({item["WeekStarting"] :gen_pickup(item)})
+                else:
+                        cal[cal_type].update({item["Week Starting"] :gen_pickup(item)})        
         return cal
 def get_id_list():
         url = "https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/package_show"
@@ -55,7 +57,8 @@ def create_ics(cal):
                         e.transparent = True
                         e.make_all_day()
                         c.events.add(e)
-                filename=cal_type+"_"+date_obj.strftime("%Y")+".ics"               
+                filename=cal_type+"_"+date_obj.strftime("%Y")+".ics"   
+                print("Creating ICS for",cal_type,"Filename:",filename)            
                 with open(filename,'w') as f:
                         f.write(str(c))
 def gen_pickup(list_val):
